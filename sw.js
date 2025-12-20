@@ -1,8 +1,10 @@
+// Cache configuration
 const CACHE_NAME = 'quran-quiz-v1';
+
+// List of assets to cache for offline availability
 const ASSETS = [
     './',
     './index.html',
-    './styles.css',
     './app.js',
     './data.js',
     'https://cdn.tailwindcss.com',
@@ -11,6 +13,10 @@ const ASSETS = [
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap'
 ];
 
+/**
+ * Service Worker Install Event
+ * Caches all critical assets to ensure the app works offline.
+ */
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -18,6 +24,11 @@ self.addEventListener('install', (event) => {
     );
 });
 
+/**
+ * Service Worker Fetch Event
+ * Intercepts network requests and serves cached resources if available.
+ * Implements a "Cache First" strategy.
+ */
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request)

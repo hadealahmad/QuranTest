@@ -1,13 +1,19 @@
-// App State-
+/**
+ * Application State Configuration
+ * Stores the current session's state including language, progress, and score.
+ */
 const CONFIG = {
     currentLang: 'en', // 'en' | 'ar'
-    currentLevelIndex: null,
-    currentQuestionIndex: 0,
-    score: 0,
-    answers: []
+    currentLevelIndex: null, // Index of the currently selected quiz level
+    currentQuestionIndex: 0, // Index of the current question within the level
+    score: 0, // User's current score
+    answers: [] // Log of user answers for review/analytics
 };
 
-// Translations
+/**
+ * UI Translation Dictionary
+ * Contains all static text strings used in the interface for both supported languages.
+ */
 const UI_TEXT = {
     en: {
         app_title: "Quran Quiz",
@@ -43,23 +49,34 @@ const UI_TEXT = {
     }
 };
 
-// DOM Elements
+// --- DOM Elements Reference ---
 const app = document.getElementById('app');
 const contentArea = document.getElementById('content-area');
 const langToggle = document.getElementById('lang-toggle');
 
-// Initialize
+/**
+ * App Initialization
+ * Sets up the initial view and event listeners when the DOM is ready.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
     lucide.createIcons();
 });
 
+/**
+ * Resets the app to the entry state (Level Selector).
+ */
 function initApp() {
     renderLevelSelector();
     updateTextDirection();
 }
 
-// Language Toggle
+// --- Language Handling ---
+
+/**
+ * Language Toggle Handler
+ * Switches between English and Arabic, updating the UI direction and re-rendering the current view.
+ */
 langToggle.addEventListener('click', () => {
     CONFIG.currentLang = CONFIG.currentLang === 'en' ? 'ar' : 'en';
     const langName = CONFIG.currentLang === 'en' ? 'العربية' : 'English';
@@ -79,6 +96,9 @@ langToggle.addEventListener('click', () => {
     }
 });
 
+/**
+ * Updates the document direction (ltr/rtl) and font family based on the selected language.
+ */
 function updateTextDirection() {
     const isRTL = CONFIG.currentLang === 'ar';
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -100,20 +120,33 @@ function updateTextDirection() {
     });
 }
 
+/**
+ * Helper to get translated string for a key.
+ */
 function t(key) {
     return UI_TEXT[CONFIG.currentLang][key] || key;
 }
 
+/**
+ * Retrieves the full dataset for the current language.
+ */
 function getCurrentData() {
     return window.QUIZ_DATA[CONFIG.currentLang];
 }
 
+/**
+ * Retrieves the data for the currently selected level.
+ */
 function getCurrentLevelData() {
     return getCurrentData()[CONFIG.currentLevelIndex];
 }
 
 // --- Views ---
 
+/**
+ * Renders the Home Screen with Level Selection Cards.
+ * Dynamically builds HTML based on the available levels in the data.
+ */
 function renderLevelSelector() {
     const data = getCurrentData();
 
@@ -147,23 +180,37 @@ function renderLevelSelector() {
     lucide.createIcons();
 }
 
+/**
+ * Returns a specific Lucide icon name based on the level index.
+ */
 function getIconForLevel(index) {
     const icons = ['sprout', 'book-open', 'star', 'users'];
     return icons[index] || 'circle';
 }
 
+/**
+ * Starts a selected quiz level.
+ * @param {number} index - Index of the level to start.
+ */
 window.startLevel = function (index) {
     CONFIG.currentLevelIndex = index;
     resetQuizState();
     renderQuestion();
 };
 
+/**
+ * Resets the internal quiz state trackers.
+ */
 function resetQuizState() {
     CONFIG.currentQuestionIndex = 0;
     CONFIG.score = 0;
     CONFIG.answers = [];
 }
 
+/**
+ * Renders the current question card with options.
+ * Handles progress bar calculation and layout.
+ */
 function renderQuestion() {
     const levelData = getCurrentLevelData();
     const question = levelData.questions[CONFIG.currentQuestionIndex];
@@ -206,6 +253,12 @@ function renderQuestion() {
     `;
 }
 
+/**
+ * User Interaction: Handles option selection.
+ * Validates answer, shows feedback, and advances to next question.
+ * @param {string} selectedOption - The text of the selected option.
+ * @param {HTMLElement} btnElement - The button element triggered.
+ */
 window.handleAnswer = function (selectedOption, btnElement) {
     // Prevent multiple clicks
     if (contentArea.querySelector('button[disabled]')) return;
@@ -224,6 +277,7 @@ window.handleAnswer = function (selectedOption, btnElement) {
     // Visual Feedback
     btnElement.classList.remove('border-border', 'hover:border-primary/50', 'hover:bg-secondary/30');
     if (isCorrect) {
+        // Correct Answer Styling
         btnElement.classList.add('border-primary', 'bg-green-100', 'text-primary');
         // Add check icon
         const icon = document.createElement('i');
@@ -240,6 +294,7 @@ window.handleAnswer = function (selectedOption, btnElement) {
             colors: ['#22c55e', '#ffffff']
         });
     } else {
+        // Incorrect Answer Styling
         btnElement.classList.add('border-destructive', 'bg-red-50', 'text-destructive');
         // Highlight correct one
         const correctBtn = Array.from(buttons).find(b => b.textContent.includes(question.correct_answer));
@@ -268,6 +323,11 @@ window.handleAnswer = function (selectedOption, btnElement) {
     }, 1500);
 };
 
+// --- Result & Sharing ---
+
+/**
+ * Renders the final result screen with score and reaction.
+ */
 function renderResult() {
     const levelData = getCurrentLevelData();
     const percentage = (CONFIG.score / levelData.questions.length) * 100;
@@ -327,6 +387,10 @@ function renderResult() {
     lucide.createIcons();
 }
 
+/**
+ * Generates a social-media ready image of the score using HTML5 Canvas.
+ * Downloads the image to the user's device.
+ */
 window.shareResult = async function () {
     const canvas = document.getElementById('share-canvas');
     const ctx = canvas.getContext('2d');

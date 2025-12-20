@@ -1,3 +1,12 @@
+/**
+ * Quran Quiz Data
+ * 
+ * Source: Interpretation of questions from Noor Academy (https://nooracademy.com/quran-quiz-for-children/)
+ * Modifications:
+ * - Converted open-ended questions to Multiple Choice Questions (MCQ).
+ * - Filtered questions to ensure consistency between English and Arabic versions.
+ * - Structured for easy consumption by the frontend app.
+ */
 window.QUIZ_DATA = {
     en: [
         {
