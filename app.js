@@ -69,6 +69,8 @@ const exitDialogDesc = document.getElementById('exit-dialog-desc');
 const exitCancelBtn = document.getElementById('exit-cancel-btn');
 const exitConfirmBtn = document.getElementById('exit-confirm-btn');
 
+let pendingExitAction = null;
+
 /**
  * App Initialization
  * Sets up the initial view and event listeners when the DOM is ready.
@@ -93,7 +95,33 @@ function initApp() {
  * Language Toggle Handler
  * Switches between English and Arabic, updating the UI direction and re-rendering the current view.
  */
+/**
+ * Language Toggle Handler
+ * Switches between English and Arabic, updating the UI direction and re-rendering the current view.
+ */
 langToggle.addEventListener('click', () => {
+    // Check if we are mid-quiz (and not finished)
+    if (CONFIG.currentLevelIndex !== null) {
+        const levelData = getCurrentLevelData();
+        const isFinished = CONFIG.answers.length === levelData.questions.length;
+
+        if (!isFinished) {
+            // Prompt user before switching, as it will reset the quiz
+            openExitDialog(() => {
+                toggleLanguage();
+            });
+            return;
+        }
+    }
+
+    // Safe to switch immediately
+    toggleLanguage();
+});
+
+/**
+ * Executes the language switch logic
+ */
+function toggleLanguage() {
     CONFIG.currentLang = CONFIG.currentLang === 'en' ? 'ar' : 'en';
     const langName = CONFIG.currentLang === 'en' ? 'العربية' : 'English';
     langToggle.querySelector('.current-lang').textContent = langName;
@@ -105,12 +133,11 @@ langToggle.addEventListener('click', () => {
     } else if (CONFIG.answers.length === getCurrentLevelData().questions.length) {
         renderResult();
     } else {
-        // If mid-quiz, maybe restart or just translate? 
-        // For simplicity, let's restart level to avoid confusion
+        // If mid-quiz, restart level to avoid confusion
         resetQuizState();
         renderLevelSelector();
     }
-});
+}
 
 
 
@@ -155,7 +182,7 @@ appLogo.addEventListener('click', () => {
             initApp();
         } else {
             // If in progress, show custom dialog
-            openExitDialog();
+            openExitDialog(initApp);
         }
     } else {
         // Already on home screen, just re-init to be safe/refresh
@@ -166,7 +193,12 @@ appLogo.addEventListener('click', () => {
 /**
  * Open Exit Dialog
  */
-function openExitDialog() {
+/**
+ * Open Exit Dialog
+ * @param {Function} onConfirm - Callback function to execute on confirmation
+ */
+function openExitDialog(onConfirm) {
+    pendingExitAction = onConfirm;
     exitDialogTitle.textContent = t('exit_dialog_title');
     exitDialogDesc.textContent = t('exit_dialog_desc');
     exitCancelBtn.textContent = t('cancel');
@@ -180,13 +212,15 @@ function openExitDialog() {
  */
 function closeExitDialog() {
     exitDialog.classList.add('hidden');
+    pendingExitAction = null;
 }
 
 // Dialog Event Listeners
 exitCancelBtn.addEventListener('click', closeExitDialog);
 exitConfirmBtn.addEventListener('click', () => {
+    const action = pendingExitAction;
     closeExitDialog();
-    initApp();
+    if (action) action();
 });
 
 /**
