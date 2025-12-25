@@ -177,8 +177,8 @@
     <main id="app" class="w-full max-w-md mx-auto p-4 md:p-6 relative z-10">
         <!-- Header / Nav -->
         <header class="flex justify-between items-center mb-8 animate-fade-in group">
-            <h1
-                class="text-2xl font-bold text-primary flex items-center gap-2 tracking-tight transition-transform hover:scale-105 duration-300 cursor-default">
+            <h1 id="app-logo"
+                class="text-2xl font-bold text-primary flex items-center gap-2 tracking-tight transition-transform hover:scale-105 duration-300 cursor-pointer">
                 <i data-lucide="book-open" class="w-8 h-8"></i>
                 <span data-translate="app_title">Quran Quiz</span>
             </h1>
@@ -197,6 +197,32 @@
         <!-- Hidden canvas for image generation -->
         <canvas id="share-canvas" class="hidden"></canvas>
     </main>
+
+    <!-- Exit Confirmation Dialog (Shadcn Style) -->
+    <div id="exit-dialog" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm hidden animate-fade-in"
+        aria-hidden="true">
+        <div
+            class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-card p-6 shadow-lg sm:rounded-lg animate-scale-in">
+            <div class="flex flex-col space-y-2 text-center sm:text-start">
+                <h3 id="exit-dialog-title" class="text-lg font-semibold text-foreground">
+                    <!-- Title injected by JS -->
+                </h3>
+                <p id="exit-dialog-desc" class="text-sm text-muted-foreground">
+                    <!-- Description injected by JS -->
+                </p>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 gap-2">
+                <button id="exit-cancel-btn"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    <!-- Cancel text injected by JS -->
+                </button>
+                <button id="exit-confirm-btn"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+                    <!-- Confirm text injected by JS -->
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="data.js"></script>

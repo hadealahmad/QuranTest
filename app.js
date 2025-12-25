@@ -30,6 +30,10 @@ const UI_TEXT = {
         share_result: "Share Result",
         home: "Back to Home",
         download_image: "Download Image",
+        exit_dialog_title: "Quit Quiz?",
+        exit_dialog_desc: "Are you sure you want to quit current quiz? Your progress will be lost.",
+        cancel: "Cancel",
+        confirm_exit: "Quit Quiz",
     },
     ar: {
         app_title: "مسابقة القرآن",
@@ -46,13 +50,24 @@ const UI_TEXT = {
         share_result: "شارك النتيجة",
         home: "العودة للرئيسية",
         download_image: "تحميل الصورة",
+        exit_dialog_title: "مغادرة المسابقة؟",
+        exit_dialog_desc: "هل أنت متأكد من مغادرة المسابقة؟ سيفقد تقدمك الحالي.",
+        cancel: "إلغاء",
+        confirm_exit: "مغادرة",
     }
 };
 
 // --- DOM Elements Reference ---
 const app = document.getElementById('app');
+const appLogo = document.getElementById('app-logo');
 const contentArea = document.getElementById('content-area');
 const langToggle = document.getElementById('lang-toggle');
+// Dialog Elements
+const exitDialog = document.getElementById('exit-dialog');
+const exitDialogTitle = document.getElementById('exit-dialog-title');
+const exitDialogDesc = document.getElementById('exit-dialog-desc');
+const exitCancelBtn = document.getElementById('exit-cancel-btn');
+const exitConfirmBtn = document.getElementById('exit-confirm-btn');
 
 /**
  * App Initialization
@@ -67,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * Resets the app to the entry state (Level Selector).
  */
 function initApp() {
+    CONFIG.currentLevelIndex = null;
     renderLevelSelector();
     updateTextDirection();
 }
@@ -96,6 +112,8 @@ langToggle.addEventListener('click', () => {
     }
 });
 
+
+
 /**
  * Updates the document direction (ltr/rtl) and font family based on the selected language.
  */
@@ -118,7 +136,58 @@ function updateTextDirection() {
             el.textContent = UI_TEXT[CONFIG.currentLang][key];
         }
     });
+
+    closeExitDialog();
 }
+
+/**
+ * App Logo Click Handler
+ * Prompts user to end quiz if in progress, otherwise returns home.
+ */
+appLogo.addEventListener('click', () => {
+    // If we are currently in a level (or result screen)
+    if (CONFIG.currentLevelIndex !== null) {
+        const levelData = getCurrentLevelData();
+        const isFinished = CONFIG.answers.length === levelData.questions.length;
+
+        if (isFinished) {
+            // If finished, just go home without prompt
+            initApp();
+        } else {
+            // If in progress, show custom dialog
+            openExitDialog();
+        }
+    } else {
+        // Already on home screen, just re-init to be safe/refresh
+        initApp();
+    }
+});
+
+/**
+ * Open Exit Dialog
+ */
+function openExitDialog() {
+    exitDialogTitle.textContent = t('exit_dialog_title');
+    exitDialogDesc.textContent = t('exit_dialog_desc');
+    exitCancelBtn.textContent = t('cancel');
+    exitConfirmBtn.textContent = t('confirm_exit');
+
+    exitDialog.classList.remove('hidden');
+}
+
+/**
+ * Close Exit Dialog
+ */
+function closeExitDialog() {
+    exitDialog.classList.add('hidden');
+}
+
+// Dialog Event Listeners
+exitCancelBtn.addEventListener('click', closeExitDialog);
+exitConfirmBtn.addEventListener('click', () => {
+    closeExitDialog();
+    initApp();
+});
 
 /**
  * Helper to get translated string for a key.
