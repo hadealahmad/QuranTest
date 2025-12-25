@@ -174,19 +174,22 @@
     </div>
 
     <!-- Main Container -->
-    <main id="app" class="w-full max-w-md mx-auto p-4 md:p-6 relative z-10">
+    <main id="app" class="w-full max-w-md mx-auto p-4 md:p-6 relative z-10 pt-24">
         <!-- Header / Nav -->
-        <header class="flex justify-between items-center mb-8 animate-fade-in group">
-            <h1 id="app-logo"
-                class="text-2xl font-bold text-primary flex items-center gap-2 tracking-tight transition-transform hover:scale-105 duration-300 cursor-pointer">
-                <i data-lucide="book-open" class="w-8 h-8"></i>
-                <span data-translate="app_title">Quran Quiz</span>
-            </h1>
-            <button id="lang-toggle"
-                class="px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-border shadow-sm hover:bg-secondary/20 transition-all duration-300 text-sm font-medium text-primary flex items-center gap-2 group-hover:shadow-md ring-offset-2 focus-visible:ring-2 ring-primary">
-                <i data-lucide="globe" class="w-4 h-4"></i>
-                <span class="current-lang">العربية</span>
-            </button>
+        <header
+            class="fixed top-0 left-0 w-full z-40 bg-background/80 backdrop-blur-md border-b border-border/50 transition-all duration-300">
+            <div class="max-w-md mx-auto px-4 md:px-6 h-16 flex justify-between items-center group">
+                <h1 id="app-logo"
+                    class="text-xl font-bold text-primary flex items-center gap-2 tracking-tight transition-transform hover:scale-105 duration-300 cursor-pointer">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                    <span data-translate="app_title">Quran Quiz</span>
+                </h1>
+                <button id="lang-toggle"
+                    class="px-3 py-1.5 rounded-full bg-secondary/50 border border-border/50 shadow-sm hover:bg-secondary transition-all duration-300 text-xs font-medium text-primary flex items-center gap-1.5 group-hover:shadow-md ring-offset-2 focus-visible:ring-2 ring-primary">
+                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                    <span class="current-lang">العربية</span>
+                </button>
+            </div>
         </header>
 
         <!-- Dynamic Content Area -->
@@ -202,7 +205,9 @@
     <div id="exit-dialog" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm hidden animate-fade-in"
         aria-hidden="true">
         <div
-            class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-card p-6 shadow-lg sm:rounded-lg animate-scale-in">
+            class="fixed z-50 grid gap-4 border border-border bg-card p-6 shadow-lg animate-scale-in 
+                    w-full bottom-0 left-0 rounded-t-2xl border-b-0 
+                    sm:bottom-auto sm:left-[50%] sm:top-[50%] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border-b sm:w-full">
             <div class="flex flex-col space-y-2 text-center sm:text-start">
                 <h3 id="exit-dialog-title" class="text-lg font-semibold text-foreground">
                     <!-- Title injected by JS -->
